@@ -10,7 +10,7 @@ class MyBinding extends Bindings {
     Get.lazyPut<CategoryControllerImpl>(() => CategoryControllerImpl(),
         fenix: true);
     Get.lazyPut<GameControllerImpl>(
-      () => GameControllerImpl(Get.arguments as List<String>),
+      () => GameControllerImpl(),
       fenix: true,
     );
   }
