@@ -90,50 +90,61 @@ class GameBody extends GetView<GameControllerImpl> {
                     return Center(
                       child: CircularProgressIndicator(
                         color: GameColors.second,
-                      ),
+                      ), // ✅ يظهر حتى يتم تحميل الأسئلة
                     );
                   }
 
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // تعطيل التمرير
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: controller.selectedCategories.length,
-                      crossAxisSpacing: 4,
-                      mainAxisSpacing: 4,
-                      childAspectRatio: 1.2,
-                    ),
-                    itemCount: controller.questions.length,
-                    itemBuilder: (context, index) {
-                      final question = controller.questions[index];
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      double screenWidth = constraints.maxWidth;
+                      double screenHeight = constraints.maxHeight;
 
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(() => QuestionView(
-                                category: question.category,
-                                value: question.points,
-                              ));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: GameColors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border:
-                                Border.all(color: GameColors.second, width: 2),
-                          ),
-                          margin:
-                              EdgeInsets.all(2), // تقليل الفراغ بين البطاقات
-                          child: Center(
-                            child: Text(
-                              question.points.toString(), // ✅ عرض النقاط فقط
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: GameColors.second,
+                      int columnCount = controller.selectedCategories.length;
+                      int rowCount = controller.questions.length ~/ columnCount;
+
+                      double itemWidth = screenWidth / columnCount;
+                      double itemHeight = screenHeight / rowCount;
+
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columnCount,
+                          childAspectRatio: itemWidth / itemHeight,
+                        ),
+                        itemCount: controller.questions.length,
+                        itemBuilder: (context, index) {
+                          final question = controller.questions[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(() => QuestionView(
+                                    category: question.category,
+                                    value: question.points,
+                                  ));
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: GameColors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    color: GameColors.second, width: 2),
+                              ),
+                              margin: EdgeInsets.all(2),
+                              child: Center(
+                                child: Text(
+                                  question.points
+                                      .toString(), // ✅ عرض النقاط فقط
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: GameColors.second,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                   );
