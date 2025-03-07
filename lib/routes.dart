@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:henka_game/core/constants/routes.dart';
 import 'package:henka_game/core/middleware/my_middleware.dart';
 import 'package:henka_game/views/screens/category_view.dart';
+import 'package:henka_game/views/screens/game_view.dart';
 import 'package:henka_game/views/screens/home_view.dart';
 import 'package:henka_game/views/screens/splash_view.dart';
 
@@ -21,9 +22,9 @@ List<GetPage<dynamic>> routes = [
     page: () => const CategoryView(),
     transition: Transition.native,
   ),
-  // GetPage(
-  //   name: GameRoutes.game,
-  //   page: () => const GameView(),
-  //   transition: Transition.native,
-  // ),
+  GetPage(
+    name: GameRoutes.game,
+    page: () => const GameView(),
+    transition: Transition.native,
+  ),
 ];

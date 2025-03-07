@@ -19,7 +19,7 @@ class DatabaseService {
     }
 
     List<QuestionModel> questions = maps.map((q) {
-      log("📝 Question Data: $q");
+      log("📝 Question Data: Sucessufull");
       return QuestionModel.fromMap(q, tableName);
     }).toList();
 

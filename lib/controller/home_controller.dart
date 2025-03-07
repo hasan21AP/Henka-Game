@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:henka_game/core/constants/routes.dart';
 
 abstract class HomeController extends GetxController {
   goToCategoryPage();
@@ -7,6 +8,6 @@ abstract class HomeController extends GetxController {
 class HomeControllerImpl extends HomeController {
   @override
   goToCategoryPage() {
-    Get.toNamed('/category');
+    Get.toNamed(GameRoutes.category);
   }
 }

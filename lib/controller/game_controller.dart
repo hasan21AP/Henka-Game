@@ -1,82 +1,83 @@
+import 'dart:developer' as dev;
 import 'package:get/get.dart';
+import 'package:henka_game/data/database_services.dart';
 import 'package:henka_game/data/models/questons_model.dart';
 
-abstract class GameController {
+abstract class GameController extends GetxController {
   Future<void> fetchQuestions();
 }
 
-class GameControllerImpl extends GetxController implements GameController {
+class GameControllerImpl extends GameController {
   final RxInt teamOneScore = 0.obs;
   final RxInt teamTwoScore = 0.obs;
   final RxList<QuestionModel> questions = <QuestionModel>[].obs;
 
+  // ✅ البيانات التي يجب تمريرها
+  late final List<String> selectedCategories;
+  late final String teamOneName;
+  late final String teamTwoName;
+
+  // ✅ استقبال البيانات عبر الـ Constructor
+  GameControllerImpl({
+    required this.selectedCategories,
+    required this.teamOneName,
+    required this.teamTwoName,
+  });
+
   @override
   void onInit() async {
     super.onInit();
-    // await fetchQuestions();/ ✅ جلب الأسئلة عند دخول الصفحة
+    dev.log("✅ Selected Categories in GameControllerImpl: $selectedCategories");
+    dev.log("✅ Team One Name: $teamOneName");
+    dev.log("✅ Team Two Name: $teamTwoName");
+    if (selectedCategories.isNotEmpty) {
+      await fetchQuestions();
+    } else {
+      dev.log("⚠️ تحذير: قائمة الفئات فارغة، تأكد من تمريرها بشكل صحيح!");
+    }
   }
 
   @override
   Future<void> fetchQuestions() async {
-    //   try {
-    //     questions.clear();
-    //     dev.log("📢 Fetching questions for categories: $selectedCategories");
+    try {
+      questions.clear();
+      dev.log("📢 Fetching questions for categories: $selectedCategories");
 
-    //     for (String category in selectedCategories) {
-    //       dev.log("🔍 Fetching questions for category: $category");
+      if (selectedCategories.isEmpty) {
+        dev.log("⚠️ تحذير: قائمة الفئات فارغة، لا يمكن جلب الأسئلة.");
+        return;
+      }
 
-    //       // ✅ **جلب الأسئلة لكل فئة من الجدول الخاص بها**
-    //       List<QuestionModel> allQuestions =
-    //           await DatabaseService.getQuestionsByCategory(category);
+      for (String category in selectedCategories) {
+        dev.log("🔍 Fetching questions for category: $category");
 
-    //       dev.log("✅ Questions fetched for $category: ${allQuestions.length}");
+        List<QuestionModel> allQuestions =
+            await DatabaseService.getQuestionsByCategory(category);
 
-    //       if (allQuestions.isEmpty) {
-    //         dev.log("⚠️ WARNING: No questions found for category $category");
-    //       }
+        dev.log("✅ Questions fetched for $category: ${allQuestions.length}");
 
-    //       // ✅ **تصنيف الأسئلة حسب النقاط**
-    //       Map<int, List<QuestionModel>> groupedQuestions = {};
-    //       for (var question in allQuestions) {
-    //         groupedQuestions.putIfAbsent(question.points, () => []).add(question);
-    //       }
+        if (allQuestions.isEmpty) {
+          dev.log("⚠️ WARNING: No questions found for category $category");
+          continue;
+        }
 
-    //       dev.log("✅ Grouped questions: $groupedQuestions");
+        // ✅ تصنيف الأسئلة حسب النقاط
+        Map<int, List<QuestionModel>> groupedQuestions = {};
+        for (var question in allQuestions) {
+          groupedQuestions.putIfAbsent(question.points, () => []).add(question);
+        }
 
-    //       // ✅ **تحديد العدد المطلوب لكل مستوى**
-    //       List<int> requiredPoints = [
-    //         100,
-    //         100,
-    //         100,
-    //         100,
-    //         200,
-    //         200,
-    //         400,
-    //         400,
-    //         500,
-    //         1000
-    //       ];
+        // ✅ إضافة الأسئلة إلى القائمة
+        groupedQuestions.forEach((points, questionsList) {
+          if (questionsList.isNotEmpty) {
+            questions.add(questionsList.first);
+          }
+        });
+      }
 
-    //       for (int points in requiredPoints) {
-    //         if (groupedQuestions.containsKey(points) &&
-    //             groupedQuestions[points]!.isNotEmpty) {
-    //           List<QuestionModel> pointQuestions = groupedQuestions[points]!;
-
-    //           // ✅ **اختيار سؤال عشوائي إذا كان هناك أكثر من سؤال في هذا المستوى**
-    //           QuestionModel selectedQuestion =
-    //               pointQuestions[Random().nextInt(pointQuestions.length)];
-
-    //           questions.add(selectedQuestion);
-
-    //           // ✅ **إزالة السؤال المختار لتجنب التكرار**
-    //           groupedQuestions[points]!.remove(selectedQuestion);
-    //         }
-    //       }
-    //     }
-
-    //     dev.log("📌 Final questions loaded: ${questions.length}");
-    //   } catch (e) {
-    //     dev.log("🚨 ERROR in fetchQuestions: $e");
-    //   }
+      dev.log("📌 Final questions loaded: ${questions.length}");
+    } catch (e) {
+      dev.log("🚨 ERROR in fetchQuestions: $e");
+    }
   }
 }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/controller/category_controller.dart';
+import 'package:henka_game/controller/game_controller.dart';
 import 'package:henka_game/core/constants/colors.dart';
+import 'package:henka_game/core/constants/routes.dart';
 import 'package:henka_game/core/customs/custom_buttons.dart';
 import 'package:henka_game/core/customs/custom_forms.dart';
 import 'package:henka_game/core/customs/custom_space.dart';
 import 'package:henka_game/core/customs/size_config.dart';
 import 'package:henka_game/core/functions/en_to_ar.dart';
-import 'package:henka_game/views/screens/game_view.dart';
 
 class CategoryBody extends GetView<CategoryControllerImpl> {
   const CategoryBody({super.key});
@@ -218,17 +219,20 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                         controller.teamOneController.text;
                     controller.teamTwoName.value =
                         controller.teamTwoController.text;
+                    List<String> selectedCategories = controller
+                        .selectedCategories.entries
+                        .where((entry) => entry.value)
+                        .map((entry) => entry.key)
+                        .toList();
 
-                    Get.to(() => GameView(
-                          selectedCategories: Map.fromEntries(
-                            // ✅ الطريقة الصحيحة لإنشاء Map جديدة
-                            controller.selectedCategories.entries.where(
-                                (entry) =>
-                                    entry.value), // ✅ تصفية القيم الصحيحة فقط
-                          ),
-                          teamOneName: controller.teamOneName.value,
-                          teamTwoName: controller.teamTwoName.value,
-                        ));
+                    // ✅ إعادة إنشاء `GameControllerImpl` بتمرير الفئات المختارة
+                    Get.put(GameControllerImpl(
+                      selectedCategories: selectedCategories,
+                      teamOneName: controller.teamOneController.text,
+                      teamTwoName: controller.teamTwoController.text,
+                    ));
+
+                    Get.toNamed(GameRoutes.game);
                   },
                   circleRadius: 10,
                   text: "ابدأ اللعبة",

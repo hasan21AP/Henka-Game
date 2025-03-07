@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/controller/game_controller.dart';
@@ -8,20 +9,12 @@ import 'package:henka_game/views/screens/question_view.dart';
 
 class GameBody extends GetView<GameControllerImpl> {
   const GameBody({
-    required this.selectedCategories,
-    required this.teamOneName,
-    required this.teamTwoName,
     super.key,
   });
 
-  final Map<String, bool> selectedCategories;
-  final String teamOneName;
-  final String teamTwoName;
-
   @override
   Widget build(BuildContext context) {
-    List<String> categories = selectedCategories.keys.toList();
-    List<int> questionLevels = [100, 200, 300, 400, 500];
+    log("Questions Loaded: ${controller.questions.length}");
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -62,7 +55,7 @@ class GameBody extends GetView<GameControllerImpl> {
                 height: screenHeight * 0.08,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: categories
+                  children: controller.selectedCategories
                       .map(
                         (category) => Expanded(
                           child: Container(
@@ -92,78 +85,73 @@ class GameBody extends GetView<GameControllerImpl> {
 
               // ✅ شبكة الأسئلة
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    double screenWidth = constraints.maxWidth;
-                    double screenHeight = constraints.maxHeight;
-
-                    int columnCount = categories.length; // عدد الأعمدة
-                    int rowCount = questionLevels.length; // عدد الصفوف
-
-                    // تحديد حجم البطاقات ديناميكياً بناءً على حجم الشاشة
-                    double itemWidth = screenWidth / columnCount;
-                    double itemHeight = screenHeight / rowCount;
-
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(), // تعطيل التمرير
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                            columnCount, // عدد الأعمدة بناءً على الفئات المختارة
-                        childAspectRatio: itemWidth /
-                            itemHeight, // التحكم في نسبة العرض للارتفاع
+                child: Obx(() {
+                  if (controller.questions.isEmpty) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: GameColors.second,
                       ),
-                      itemCount: columnCount * rowCount,
-                      itemBuilder: (context, index) {
-                        int categoryIndex = index % columnCount;
-                        int levelIndex = index ~/ columnCount;
-                        String category = categories[categoryIndex];
-                        int questionValue = questionLevels[levelIndex];
+                    );
+                  }
 
-                        return GestureDetector(
-                          onTap: () {
-                            Get.to(() => QuestionView(
-                                  category: category,
-                                  value: questionValue,
-                                ));
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: GameColors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  color: GameColors.second, width: 2),
-                            ),
-                            margin:
-                                EdgeInsets.all(2), // تقليل الفراغ بين البطاقات
-                            child: Center(
-                              child: Text(
-                                questionValue.toString(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: GameColors.second,
-                                ),
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(), // تعطيل التمرير
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: controller.selectedCategories.length,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                      childAspectRatio: 1.2,
+                    ),
+                    itemCount: controller.questions.length,
+                    itemBuilder: (context, index) {
+                      final question = controller.questions[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => QuestionView(
+                                category: question.category,
+                                value: question.points,
+                              ));
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: GameColors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border:
+                                Border.all(color: GameColors.second, width: 2),
+                          ),
+                          margin:
+                              EdgeInsets.all(2), // تقليل الفراغ بين البطاقات
+                          child: Center(
+                            child: Text(
+                              question.points.toString(), // ✅ عرض النقاط فقط
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: GameColors.second,
                               ),
                             ),
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                        ),
+                      );
+                    },
+                  );
+                }),
               ),
 
               VerticalSpace(value: 0.5),
 
               // ✅ لوحة النقاط
               Flexible(
-                flex: 1, // ✅ يمنع لوحة النقاط من التسبب في overflow
+                flex: 1,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildScoreBoard(teamOneName, controller.teamOneScore),
-                    _buildScoreBoard(teamTwoName, controller.teamTwoScore),
+                    _buildScoreBoard(
+                        controller.teamOneName, controller.teamOneScore),
+                    _buildScoreBoard(
+                        controller.teamTwoName, controller.teamTwoScore),
                   ],
                 ),
               ),
