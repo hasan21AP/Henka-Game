@@ -20,6 +20,13 @@ class GameBody extends GetView<GameControllerImpl> {
     return LayoutBuilder(
       builder: (context, constraints) {
         double screenHeight = constraints.maxHeight;
+        double screenWidth = constraints.maxWidth;
+
+        int columnCount = controller.selectedCategories.length;
+        int rowCount = controller.questions.length ~/ columnCount;
+
+        double itemWidth = screenWidth / columnCount;
+        double itemHeight = screenHeight / rowCount;
 
         return Padding(
           padding: EdgeInsets.all(8.0),
@@ -49,11 +56,11 @@ class GameBody extends GetView<GameControllerImpl> {
                   ),
                 ],
               ),
-              VerticalSpace(value: 0.5),
+              VerticalSpace(value: 0.3), // ✅ تقليل المسافة العلوية
 
               // ✅ عناوين الفئات المختارة
               SizedBox(
-                height: screenHeight * 0.08,
+                height: 50, // ✅ تحديد ارتفاع مناسب
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: controller.selectedCategories
@@ -82,87 +89,74 @@ class GameBody extends GetView<GameControllerImpl> {
                       .toList(),
                 ),
               ),
-              VerticalSpace(value: 0.5),
+              VerticalSpace(value: 0.3), // ✅ تقليل المسافة العلوية
 
-              // ✅ شبكة الأسئلة
+              // ✅ الشبكة التي تحتوي على البطاقات، تأخذ كل المساحة المتبقية
               Expanded(
+                flex: 5, // ✅ السماح للشبكة بأخذ معظم الشاشة
                 child: Obx(() {
-                  if (controller.questions.isEmpty) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: GameColors.second,
-                      ), // ✅ يظهر حتى يتم تحميل الأسئلة
-                    );
-                  }
+                  List<QuestionModel> sortedQuestions =
+                      controller.questions.toList();
+                  sortedQuestions.sort((a, b) => a.points.compareTo(b.points));
 
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      double screenWidth = constraints.maxWidth;
-                      double screenHeight = constraints.maxHeight;
+                  return GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columnCount,
+                      childAspectRatio: (itemWidth * 1.5) /
+                          itemHeight, // ✅ تحسين أبعاد البطاقات
+                    ),
+                    itemCount: sortedQuestions.length,
+                    itemBuilder: (context, index) {
+                      final QuestionModel question = sortedQuestions[index];
 
-                      int columnCount = controller.selectedCategories.length;
-                      int rowCount = controller.questions.length ~/ columnCount;
-
-                      double itemWidth = screenWidth / columnCount;
-                      double itemHeight = screenHeight / rowCount;
-
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: columnCount,
-                          childAspectRatio: itemWidth / itemHeight,
-                        ),
-                        itemCount: controller.questions.length,
-                        itemBuilder: (context, index) {
-                          final QuestionModel question =
-                              controller.questions[index];
-
-                          return GestureDetector(
-                            onTap: () {
-                              Get.to(() => QuestionView());
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: GameColors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                    color: GameColors.second, width: 2),
-                              ),
-                              margin: EdgeInsets.all(2),
-                              child: Center(
-                                child: Text(
-                                  question.points
-                                      .toString(), // ✅ عرض النقاط فقط
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: GameColors.second,
-                                  ),
-                                ),
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => QuestionView());
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: GameColors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border:
+                                Border.all(color: GameColors.second, width: 2),
+                          ),
+                          margin: EdgeInsets.all(2),
+                          child: Center(
+                            child: Text(
+                              question.points.toString(),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: GameColors.second,
                               ),
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       );
                     },
                   );
                 }),
               ),
 
-              VerticalSpace(value: 0.5),
-
-              // ✅ لوحة النقاط
-              Flexible(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildScoreBoard(
-                        controller.teamOneName, controller.teamOneScore),
-                    _buildScoreBoard(
-                        controller.teamTwoName, controller.teamTwoScore),
-                  ],
+              // ✅ نقل النتيجة إلى الأسفل تمامًا
+              Expanded(
+                flex: 1, // ✅ مساحة أصغر للنتائج
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 8.0), // ✅ تقليل الفراغ السفلي
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildScoreBoard(
+                            controller.teamOneName, controller.teamOneScore),
+                        _buildScoreBoard(
+                            controller.teamTwoName, controller.teamTwoScore),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],

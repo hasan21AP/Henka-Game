@@ -27,21 +27,13 @@ class GameControllerImpl extends GameController {
   });
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     dev.log("✅ Selected Categories in GameControllerImpl: $selectedCategories");
     dev.log("✅ Team One Name: $teamOneName");
     dev.log("✅ Team Two Name: $teamTwoName");
 
-    // ✅ تأخير استدعاء `fetchQuestions()` حتى يتم تحميل الواجهة بالكامل
-    Future.delayed(Duration(seconds: 3), () async {
-      if (selectedCategories.isNotEmpty) {
-        await fetchQuestions();
-      } else {
-        dev.log("⚠️ تحذير: قائمة الفئات فارغة، تأكد من تمريرها بشكل صحيح!");
-        isLoading.value = false; // ✅ تأكيد إنهاء التحميل
-      }
-    });
+    await fetchQuestions();
   }
 
   @override
