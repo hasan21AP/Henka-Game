@@ -15,14 +15,6 @@ class GameBody extends GetView<GameControllerImpl> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = SizeConfig.screenHeight!;
-    double screenWidth = SizeConfig.screenWidth!;
-
-    int columnCount = controller.selectedCategories.length;
-    int rowCount = controller.questions.length ~/ columnCount;
-
-    double itemWidth = screenWidth / columnCount;
-    double itemHeight =
-        screenHeight / (rowCount + 2); // ✅ توزيع الارتفاع بشكل أفضل
 
     return Padding(
       padding: EdgeInsets.all(8.0),
@@ -52,11 +44,11 @@ class GameBody extends GetView<GameControllerImpl> {
               ),
             ],
           ),
-          VerticalSpace(value: 0.3), // ✅ تقليل المسافة العلوية
+          VerticalSpace(value: 0.3),
 
           // ✅ عناوين الفئات المختارة
           SizedBox(
-            height: screenHeight * 0.08, // ✅ تحديد ارتفاع مناسب ديناميكيًا
+            height: screenHeight * 0.08,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: controller.selectedCategories
@@ -85,81 +77,87 @@ class GameBody extends GetView<GameControllerImpl> {
                   .toList(),
             ),
           ),
-          VerticalSpace(value: 0.3), // ✅ تقليل المسافة العلوية
+          VerticalSpace(value: 0.3),
 
+          // ✅ شبكة الأسئلة
           Expanded(
-            flex: 5, // ✅ السماح للشبكة بأخذ معظم الشاشة
+            flex: 5,
             child: Obx(() {
-              List<QuestionModel> sortedQuestions =
-                  controller.questions.toList();
-              sortedQuestions.sort((a, b) => a.points.compareTo(b.points));
-
               return controller.isLoading.value
                   ? Center(
                       child:
                           CircularProgressIndicator(color: GameColors.second))
-                  : GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: columnCount,
-                        childAspectRatio: (itemWidth * 1.3) /
-                            itemHeight, // ✅ تحسين أبعاد البطاقات
-                      ),
-                      itemCount: sortedQuestions.length,
-                      itemBuilder: (context, index) {
-                        final QuestionModel question = sortedQuestions[index];
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: controller.selectedCategories.map((category) {
+                        List<QuestionModel> categoryList =
+                            controller.categoryQuestions[category] ?? [];
 
-                        return GestureDetector(
-                          onTap: () async {
-                            if (Get.isRegistered<QuestionControllerImpl>()) {
-                              Get.delete<QuestionControllerImpl>();
-                            }
-                            Get.put(QuestionControllerImpl(
-                                question: question.question,
-                                answer: question.answer,
-                                points: question.points,
-                                category: question.category,
-                                answerTime: controller.answerTime));
-                            String? result = await Get.to(() => QuestionView());
-                            if (result == "teamOne") {
-                              controller.teamOneScore.value += question.points;
-                            } else if (result == "teamTwo") {
-                              controller.teamTwoScore.value += question.points;
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: GameColors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  color: GameColors.second, width: 2),
-                            ),
-                            margin: EdgeInsets.all(2),
-                            child: Center(
-                              child: Text(
-                                question.points.toString(),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: GameColors.second,
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: categoryList.length,
+                            itemBuilder: (context, index) {
+                              final question = categoryList[index];
+
+                              return GestureDetector(
+                                onTap: () async {
+                                  if (Get.isRegistered<
+                                      QuestionControllerImpl>()) {
+                                    Get.delete<QuestionControllerImpl>();
+                                  }
+                                  Get.put(QuestionControllerImpl(
+                                    question: question.question,
+                                    answer: question.answer,
+                                    points: question.points,
+                                    category: question.category,
+                                    answerTime: controller.answerTime,
+                                  ));
+                                  String? result =
+                                      await Get.to(() => QuestionView());
+                                  if (result == "teamOne") {
+                                    controller.teamOneScore.value +=
+                                        question.points;
+                                  } else if (result == "teamTwo") {
+                                    controller.teamTwoScore.value +=
+                                        question.points;
+                                  }
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.all(4),
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: GameColors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: GameColors.second, width: 2),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      question.points.toString(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: GameColors.second,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
                         );
-                      },
+                      }).toList(),
                     );
             }),
           ),
 
           // ✅ نقل النتيجة إلى الأسفل تمامًا
           Expanded(
-            flex: 1, // ✅ مساحة أصغر للنتائج
+            flex: 1,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding:
-                    const EdgeInsets.only(bottom: 8.0), // ✅ تقليل الفراغ السفلي
+                padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -176,45 +174,45 @@ class GameBody extends GetView<GameControllerImpl> {
       ),
     );
   }
+}
 
-  // ✅ مكون لوحة النقاط لكل فريق
-  Widget _buildScoreBoard(String teamName, RxInt score) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            teamName,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: GameColors.second),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.remove, color: GameColors.second),
-                onPressed: () {
-                  if (score.value > 0) score.value -= 100;
-                },
-              ),
-              Obx(() => Text(
-                    score.value.toString(),
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: GameColors.second),
-                  )),
-              IconButton(
-                icon: Icon(Icons.add, color: GameColors.second),
-                onPressed: () {
-                  score.value += 100;
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+// ✅ مكون لوحة النقاط لكل فريق
+Widget _buildScoreBoard(String teamName, RxInt score) {
+  return Expanded(
+    child: Column(
+      children: [
+        Text(
+          teamName,
+          style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: GameColors.second),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.remove, color: GameColors.second),
+              onPressed: () {
+                if (score.value > 0) score.value -= 100;
+              },
+            ),
+            Obx(() => Text(
+                  score.value.toString(),
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: GameColors.second),
+                )),
+            IconButton(
+              icon: const Icon(Icons.add, color: GameColors.second),
+              onPressed: () {
+                score.value += 100;
+              },
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
