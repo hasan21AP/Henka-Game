@@ -5,6 +5,7 @@ import 'package:henka_game/controller/game_controller.dart';
 import 'package:henka_game/core/constants/colors.dart';
 import 'package:henka_game/core/customs/custom_space.dart';
 import 'package:henka_game/core/functions/en_to_ar.dart';
+import 'package:henka_game/data/models/questons_model.dart';
 import 'package:henka_game/views/screens/question_view.dart';
 
 class GameBody extends GetView<GameControllerImpl> {
@@ -114,14 +115,12 @@ class GameBody extends GetView<GameControllerImpl> {
                         ),
                         itemCount: controller.questions.length,
                         itemBuilder: (context, index) {
-                          final question = controller.questions[index];
+                          final QuestionModel question =
+                              controller.questions[index];
 
                           return GestureDetector(
                             onTap: () {
-                              Get.to(() => QuestionView(
-                                    category: question.category,
-                                    value: question.points,
-                                  ));
+                              Get.to(() => QuestionView());
                             },
                             child: Container(
                               decoration: BoxDecoration(

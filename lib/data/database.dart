@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // ✅ استيراد `sqflite_common_ffi` لتهيئة `databaseFactory` عند التشغيل على سطح المكتب
