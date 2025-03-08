@@ -23,11 +23,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
             Text(
               controller.question,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: GameColors.second,
-              ),
+              style: TextTheme.of(context).titleLarge,
             ),
             VerticalSpace(value: 2),
 
@@ -35,11 +31,12 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
             CustomElevetedButton(
               text: 'اظهار الإجابة',
               onPressed: () => controller.toggleAnswer(),
-              relativisticWidth: 0.3,
+              relativisticWidth: 0.2,
               relativisticHeight: 0.08,
               circleRadius: 8,
               mainColor: GameColors.second,
               secondColor: GameColors.white,
+              textStyle: TextTheme.of(context).titleSmall,
             ),
 
             // ✅ إظهار الإجابة عند الضغط على الزر
@@ -49,7 +46,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
                     child: Text(
                       controller.answer,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20, color: GameColors.second),
+                      style: TextTheme.of(context).titleMedium,
                     ),
                   )
                 : Container()),
@@ -57,9 +54,12 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
             VerticalSpace(value: 2),
 
             // ✅ عرض المؤقت
+            // ✅ عرض المؤقت أو اسم الفريق حسب الحالة
             Obx(() => Text(
-                  "الوقت المتبقي: ${controller.remainingTime.value} ثانية",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  controller.isTeamOneTime.value
+                      ? "الوقت المتبقي لفريق ${controller.teamOneName} :  ${controller.remainingTime.value} ثانية"
+                      : " الوقت المتبقي لفريق ${controller.teamTwoName} : ${controller.remainingTime.value} ثانية",
+                  style: TextTheme.of(context).titleMedium,
                 )),
 
             VerticalSpace(value: 2),
@@ -71,28 +71,60 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
                 CustomElevetedButton(
                   onPressed: () {
                     controller.stopTimer();
+                    controller.isTeamOneTurn.value =
+                        !controller.isTeamOneTurn.value;
                     Get.back(result: "teamOne");
                   },
-                  text: "إعطاء النقاط للفريق الاول",
+                  text: "إعطاء النقاط لفريق ${controller.teamOneName}",
                   relativisticWidth: 0.1,
                   relativisticHeight: 0.08,
                   circleRadius: 8,
                   mainColor: GameColors.second,
                   secondColor: GameColors.white,
+                  textStyle: TextTheme.of(context).titleSmall,
                 ),
                 CustomElevetedButton(
                   onPressed: () {
                     controller.stopTimer();
-                    Get.back(result: "teamTwo");
+                    controller.isTeamOneTurn.value =
+                        !controller.isTeamOneTurn.value;
+                    Get.back();
                   },
-                  text: "إعطاء النقاط للفريق الثاني",
+                  text: "لم يجب احد من الفريقين",
                   relativisticWidth: 0.1,
                   relativisticHeight: 0.08,
                   circleRadius: 8,
                   mainColor: GameColors.second,
                   secondColor: GameColors.white,
+                  textStyle: TextTheme.of(context).titleSmall,
+                ),
+                CustomElevetedButton(
+                  onPressed: () {
+                    controller.stopTimer();
+                    controller.isTeamOneTurn.value =
+                        !controller.isTeamOneTurn.value;
+                    Get.back(result: "teamTwo");
+                  },
+                  text: "إعطاء النقاط لفريق ${controller.teamTwoName}",
+                  relativisticWidth: 0.1,
+                  relativisticHeight: 0.08,
+                  circleRadius: 8,
+                  mainColor: GameColors.second,
+                  secondColor: GameColors.white,
+                  textStyle: TextTheme.of(context).titleSmall,
                 ),
               ],
+            ),
+            VerticalSpace(value: 2),
+            Center(
+              child: Obx(() => Text(
+                    controller.isTeamOneTurn.value
+                        ? "دور فريق:  ${controller.teamOneName}"
+                        : "دور فريق:  ${controller.teamTwoName}",
+                    style: TextTheme.of(context)
+                        .titleMedium!
+                        .copyWith(color: GameColors.fourth),
+                  )),
             ),
           ],
         ));

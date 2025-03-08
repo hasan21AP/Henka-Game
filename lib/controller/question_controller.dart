@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:get/get.dart';
 
 class QuestionController extends GetxController {}
@@ -10,10 +9,15 @@ class QuestionControllerImpl extends QuestionController {
   late final int points;
   late final String category;
   late final double answerTime;
+  late final RxBool isTeamOneTurn;
+  late final String teamOneName;
+  late final String teamTwoName;
 
   RxBool showAnswer = false.obs; // ✅ تحكم في إظهار الإجابة
   RxInt remainingTime = 0.obs; // ✅ الوقت المتبقي
-  RxBool isTeamOneTurn = true.obs; // ✅ دور الفريق الأول أم الثاني
+  RxString timerText = "".obs; // ✅ النص الذي سيعرض بدلاً من الوقت
+  RxBool isTeamOneTime =
+      true.obs; // ✅ الفريق الذي يجيب الآن (لا يحدد الدور القادم في GameBody)
   Timer? _timer;
 
   QuestionControllerImpl({
@@ -22,18 +26,19 @@ class QuestionControllerImpl extends QuestionController {
     required this.category,
     required this.answerTime,
     required this.answer,
+    required this.isTeamOneTurn,
+    required this.teamOneName,
+    required this.teamTwoName,
   });
 
   @override
   void onInit() {
     super.onInit();
-    log("Question: $question");
-    log("Answer: $answer");
-    log("Points: $points");
-    log("Category: $category");
-    log("Answer Time: $answerTime");
-
-    _startTimer(); // ✅ بدء المؤقت عند فتح الصفحة
+    isTeamOneTime.value =
+        isTeamOneTurn.value; // ✅ الفريق الذي يجيب الآن هو من اختار البطاقة
+    timerText.value =
+        "الوقت المتبقي لفريق: ${isTeamOneTime.value ? teamOneName : teamTwoName}";
+    _startTimer();
   }
 
   void _startTimer() {
@@ -43,20 +48,28 @@ class QuestionControllerImpl extends QuestionController {
         remainingTime.value--;
       } else {
         timer.cancel();
-        _startTeamTwoTimer(); // ✅ بعد انتهاء الفريق الأول، يبدأ مؤقت الفريق الثاني
+        timerText.value =
+            "انتهى وقت فريق ${isTeamOneTime.value ? teamOneName : teamTwoName}، بدأ وقت فريق ${!isTeamOneTime.value ? teamOneName : teamTwoName}";
+        Future.delayed(Duration(seconds: 2), () {
+          _startTeamTwoTimer();
+        });
       }
     });
   }
 
   void _startTeamTwoTimer() {
-    isTeamOneTurn.value = false;
+    isTeamOneTime.value = !isTeamOneTime.value; // ✅ تغيير الفريق الذي يجيب فقط
     remainingTime.value = (answerTime / 2).toInt();
+    timerText.value =
+        "الوقت المتبقي لفريق: ${isTeamOneTime.value ? teamOneName : teamTwoName}";
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (remainingTime.value > 0) {
         remainingTime.value--;
       } else {
         timer.cancel();
+        timerText.value =
+            "انتهى وقت فريق ${isTeamOneTime.value ? teamOneName : teamTwoName}";
       }
     });
   }

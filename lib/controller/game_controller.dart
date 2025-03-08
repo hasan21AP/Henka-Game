@@ -11,6 +11,7 @@ class GameControllerImpl extends GameController {
   final RxInt teamOneScore = 0.obs;
   final RxInt teamTwoScore = 0.obs;
   final RxBool isLoading = true.obs;
+  RxBool isTeamOneTurn = true.obs; // ✅ لتتبع دور الفريق الحالي
 
   late final List<String> selectedCategories;
   late final String teamOneName;

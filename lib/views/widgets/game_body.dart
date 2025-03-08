@@ -34,11 +34,7 @@ class GameBody extends GetView<GameControllerImpl> {
                 child: Center(
                   child: Text(
                     "حنكة",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: GameColors.second,
-                    ),
+                    style: TextTheme.of(context).titleLarge,
                   ),
                 ),
               ),
@@ -64,11 +60,9 @@ class GameBody extends GetView<GameControllerImpl> {
                           child: Text(
                             nameEnToAr(category),
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: GameColors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: TextTheme.of(context).titleSmall!.copyWith(
+                                  color: GameColors.white,
+                                ),
                           ),
                         ),
                       ),
@@ -111,6 +105,9 @@ class GameBody extends GetView<GameControllerImpl> {
                                     points: question.points,
                                     category: question.category,
                                     answerTime: controller.answerTime,
+                                    isTeamOneTurn: controller.isTeamOneTurn,
+                                    teamOneName: controller.teamOneName,
+                                    teamTwoName: controller.teamTwoName,
                                   ));
                                   String? result =
                                       await Get.to(() => QuestionView());
@@ -134,11 +131,7 @@ class GameBody extends GetView<GameControllerImpl> {
                                   child: Center(
                                     child: Text(
                                       question.points.toString(),
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: GameColors.second,
-                                      ),
+                                      style: TextTheme.of(context).titleSmall,
                                     ),
                                   ),
                                 ),
@@ -161,10 +154,18 @@ class GameBody extends GetView<GameControllerImpl> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildScoreBoard(
-                        controller.teamOneName, controller.teamOneScore),
-                    _buildScoreBoard(
-                        controller.teamTwoName, controller.teamTwoScore),
+                    _buildScoreBoard(controller.teamOneName,
+                        controller.teamOneScore, context),
+                    // ✅ النص في المنتصف ليظهر الفريق الحالي
+                    Obx(() => Text(
+                          controller.isTeamOneTurn.value
+                              ? "دور فريق:  ${controller.teamOneName}"
+                              : "دور فريق:  ${controller.teamTwoName}",
+                          style: TextTheme.of(context).titleMedium,
+                        )),
+
+                    _buildScoreBoard(controller.teamTwoName,
+                        controller.teamTwoScore, context),
                   ],
                 ),
               ),
@@ -177,16 +178,13 @@ class GameBody extends GetView<GameControllerImpl> {
 }
 
 // ✅ مكون لوحة النقاط لكل فريق
-Widget _buildScoreBoard(String teamName, RxInt score) {
+Widget _buildScoreBoard(String teamName, RxInt score, BuildContext context) {
   return Expanded(
     child: Column(
       children: [
         Text(
           teamName,
-          style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: GameColors.second),
+          style: TextTheme.of(context).titleSmall,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
