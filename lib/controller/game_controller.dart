@@ -18,22 +18,28 @@ class GameControllerImpl extends GameController {
   late final List<String> selectedCategories;
   late final String teamOneName;
   late final String teamTwoName;
+  late final double answerTime;
 
   // ✅ استقبال البيانات عبر الـ Constructor
   GameControllerImpl({
     required this.selectedCategories,
     required this.teamOneName,
     required this.teamTwoName,
+    required this.answerTime,
   });
 
   @override
   void onInit() async {
-    super.onInit();
     dev.log("✅ Selected Categories in GameControllerImpl: $selectedCategories");
     dev.log("✅ Team One Name: $teamOneName");
     dev.log("✅ Team Two Name: $teamTwoName");
 
     await fetchQuestions();
+    super.onInit();
+    update();
+    Future.delayed(Duration(milliseconds: 500), () {
+      Get.forceAppUpdate(); // 🔄 يجبر GetX على إعادة بناء التطبيق بالكامل
+    });
   }
 
   @override
@@ -82,6 +88,7 @@ class GameControllerImpl extends GameController {
       dev.log("🚨 ERROR in fetchQuestions: $e");
     } finally {
       isLoading.value = false; // ✅ إنهاء التحميل دائمًا
+      update();
     }
   }
 }

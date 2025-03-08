@@ -230,6 +230,7 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                       selectedCategories: selectedCategories,
                       teamOneName: controller.teamOneController.text,
                       teamTwoName: controller.teamTwoController.text,
+                      answerTime: controller.answerTime.value,
                     ));
 
                     Get.toNamed(GameRoutes.game);
