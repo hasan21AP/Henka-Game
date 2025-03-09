@@ -37,17 +37,16 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 0.05,
-            color: GameColors.main,
+        width: width,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 0.05,
+              color: GameColors.main,
+            ),
           ),
-        ),
-        child: Form(
-          key: formKey,
           child: TextFormField(
+            key: formKey,
             controller: myController,
             keyboardType: TextInputType.name,
             autocorrect: true,
@@ -74,9 +73,7 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
                   fontSize: fontSize,
                 ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 

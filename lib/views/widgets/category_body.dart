@@ -208,9 +208,10 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                     hintText: "اسم الفريق الأول",
                     textAlign: TextAlign.center,
                     fontSize: SizeConfig.screenWidth! * 0.02,
+                    width: SizeConfig.screenWidth! * 0.4,
                   ),
 
-                  SizedBox(height: 10), // مسافة بين الحقلين
+                  VerticalSpace(value: 1), // مسافة بين الحقلين
 
                   // ✅ إدخال اسم الفريق الثاني
                   CustomTextFieldFormForUserName(
