@@ -39,17 +39,17 @@ class HenkaGame extends StatelessWidget {
               titleLarge: TextStyle(
                   color: GameColors.second,
                   fontSize: SizeConfig.screenHeight! * 0.1,
-                  fontFamily: 'Abd ElRady',
+                  fontFamily: 'Cairo-Reqular',
                   fontWeight: FontWeight.w800),
               titleMedium: TextStyle(
                   color: GameColors.second,
                   fontSize: SizeConfig.screenHeight! * 0.05,
-                  fontFamily: 'Abd ElRady',
+                  fontFamily: 'Cairo-Reqular',
                   fontWeight: FontWeight.w800),
               titleSmall: TextStyle(
                 color: GameColors.second,
                 fontSize: SizeConfig.screenHeight! * 0.025,
-                fontFamily: 'Abd ElRady',
+                fontFamily: 'Cairo-Reqular',
                 fontWeight: FontWeight.w800,
               ))),
       textDirection: TextDirection.rtl,

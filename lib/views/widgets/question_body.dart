@@ -23,7 +23,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
             Text(
               controller.question,
               textAlign: TextAlign.center,
-              style: TextTheme.of(context).titleLarge,
+              style: TextTheme.of(context).titleMedium,
             ),
             VerticalSpace(value: 2),
 

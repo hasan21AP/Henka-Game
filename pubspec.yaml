@@ -67,8 +67,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Abd ElRady
+    - family: Cairo-Reqular
       fonts:
-        - asset: assets/fonts/Abd-ElRady-Regular.otf
+        # - asset: assets/fonts/Abd-ElRady-Regular.otf
+        - asset: assets/fonts/cairo/Cairo-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

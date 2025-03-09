@@ -16,7 +16,8 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
       this.width,
       this.initialValue,
       required this.textAlign,
-      required this.fontSize});
+      required this.fontSize,
+      this.hintStyle});
 
   final Color? focusBorderColor;
   final VoidCallback? onPressed;
@@ -31,6 +32,7 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
   final double? width;
   final String? initialValue;
   final double fontSize;
+  final TextStyle? hintStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +59,7 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
               hintText: hintText,
+              hintStyle: hintStyle,
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: borderColor!, width: 2),
               ),
