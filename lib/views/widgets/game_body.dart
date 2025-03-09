@@ -91,47 +91,70 @@ class GameBody extends GetView<GameControllerImpl> {
                           child: ListView.builder(
                             itemCount: categoryList.length,
                             itemBuilder: (context, index) {
-                              final question = categoryList[index];
+                              final QuestionModel question =
+                                  categoryList[index];
+                              String questionKey =
+                                  "${category}_${question.points}_${question.question.hashCode}";
+
+                              bool isAnswered = controller.answeredQuestions
+                                  .containsKey(questionKey);
+                              String? resultText =
+                                  controller.answeredQuestions[questionKey];
 
                               return GestureDetector(
-                                onTap: () async {
-                                  if (Get.isRegistered<
-                                      QuestionControllerImpl>()) {
-                                    Get.delete<QuestionControllerImpl>();
-                                  }
-                                  Get.put(QuestionControllerImpl(
-                                    question: question.question,
-                                    answer: question.answer,
-                                    points: question.points,
-                                    category: question.category,
-                                    answerTime: controller.answerTime,
-                                    isTeamOneTurn: controller.isTeamOneTurn,
-                                    teamOneName: controller.teamOneName,
-                                    teamTwoName: controller.teamTwoName,
-                                  ));
-                                  String? result =
-                                      await Get.to(() => QuestionView());
-                                  if (result == "teamOne") {
-                                    controller.teamOneScore.value +=
-                                        question.points;
-                                  } else if (result == "teamTwo") {
-                                    controller.teamTwoScore.value +=
-                                        question.points;
-                                  }
-                                },
+                                onTap: isAnswered
+                                    ? null
+                                    : () async {
+                                        if (Get.isRegistered<
+                                            QuestionControllerImpl>()) {
+                                          Get.delete<QuestionControllerImpl>();
+                                        }
+                                        Get.put(QuestionControllerImpl(
+                                          question: question.question,
+                                          answer: question.answer,
+                                          points: question.points,
+                                          category: question.category,
+                                          answerTime: controller.answerTime,
+                                          isTeamOneTurn:
+                                              controller.isTeamOneTurn,
+                                          teamOneName: controller.teamOneName,
+                                          teamTwoName: controller.teamTwoName,
+                                        ));
+                                        String? result =
+                                            await Get.to(() => QuestionView());
+                                        if (result != null) {
+                                          controller.updateAnsweredQuestions(
+                                              questionKey,
+                                              result,
+                                              question.points);
+                                        }
+                                      },
                                 child: Container(
                                   margin: EdgeInsets.all(4),
                                   padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: GameColors.white,
+                                    color: isAnswered
+                                        ? GameColors.second
+                                        : GameColors.white,
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                        color: GameColors.second, width: 2),
+                                        color: isAnswered
+                                            ? GameColors.white
+                                            : GameColors.second,
+                                        width: 2),
                                   ),
                                   child: Center(
                                     child: Text(
-                                      question.points.toString(),
-                                      style: TextTheme.of(context).titleSmall,
+                                      isAnswered
+                                          ? "$resultText\n${question.points}"
+                                          : question.points.toString(),
+                                      style: isAnswered
+                                          ? TextTheme.of(context)
+                                              .titleSmall!
+                                              .copyWith(
+                                                color: GameColors.white,
+                                              )
+                                          : TextTheme.of(context).titleSmall,
                                     ),
                                   ),
                                 ),

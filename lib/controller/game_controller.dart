@@ -5,6 +5,7 @@ import 'package:henka_game/data/models/questons_model.dart';
 
 abstract class GameController extends GetxController {
   Future<void> fetchQuestions();
+  void updateAnsweredQuestions(String questionKey, String result, int points);
 }
 
 class GameControllerImpl extends GameController {
@@ -12,6 +13,8 @@ class GameControllerImpl extends GameController {
   final RxInt teamTwoScore = 0.obs;
   final RxBool isLoading = true.obs;
   RxBool isTeamOneTurn = true.obs; // ✅ لتتبع دور الفريق الحالي
+  // ✅ سجل البطاقات المختارة
+  final RxMap<String, String> answeredQuestions = <String, String>{}.obs;
 
   late final List<String> selectedCategories;
   late final String teamOneName;
@@ -30,10 +33,6 @@ class GameControllerImpl extends GameController {
 
   @override
   void onInit() async {
-    dev.log("✅ Selected Categories in GameControllerImpl: $selectedCategories");
-    dev.log("✅ Team One Name: $teamOneName");
-    dev.log("✅ Team Two Name: $teamTwoName");
-
     await fetchQuestions();
     super.onInit();
     update();
@@ -46,7 +45,9 @@ class GameControllerImpl extends GameController {
   Future<void> fetchQuestions() async {
     try {
       isLoading.value = true;
-      categoryQuestions.clear(); // ✅ مسح أي بيانات قديمة
+      // ✅ مسح أي بيانات قديمة
+      categoryQuestions.clear();
+      answeredQuestions.clear();
 
       for (String category in selectedCategories) {
         dev.log("🔍 Fetching questions for category: $category");
@@ -77,5 +78,19 @@ class GameControllerImpl extends GameController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // ✅ تحديث الإجابات عند اختيار بطاقة
+  @override
+  void updateAnsweredQuestions(String questionKey, String result, int points) {
+    answeredQuestions[questionKey] = result;
+    // ✅ تحديث نتيجة الفريق بناءً على الإجابة
+    if (result == teamOneName) {
+      teamOneScore.value += points;
+    } else if (result == teamTwoName) {
+      teamTwoScore.value += points;
+    }
+
+    Get.forceAppUpdate(); // ✅ تحديث الواجهة لضمان ظهور التعديلات
   }
 }
