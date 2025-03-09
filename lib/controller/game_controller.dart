@@ -85,9 +85,9 @@ class GameControllerImpl extends GameController {
   void updateAnsweredQuestions(String questionKey, String result, int points) {
     answeredQuestions[questionKey] = result;
     // ✅ تحديث نتيجة الفريق بناءً على الإجابة
-    if (result == teamOneName) {
+    if (result == "$teamOneName ✅") {
       teamOneScore.value += points;
-    } else if (result == teamTwoName) {
+    } else if (result == "$teamTwoName ✅") {
       teamTwoScore.value += points;
     }
 

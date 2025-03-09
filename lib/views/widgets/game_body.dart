@@ -144,17 +144,36 @@ class GameBody extends GetView<GameControllerImpl> {
                                         width: 2),
                                   ),
                                   child: Center(
-                                    child: Text(
-                                      isAnswered
-                                          ? "$resultText\n${question.points}"
-                                          : question.points.toString(),
-                                      style: isAnswered
-                                          ? TextTheme.of(context)
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center, // ✅ يجعل النصوص في المنتصف عموديًا
+                                      children: [
+                                        if (isAnswered) // ✅ عرض اسم الفريق الذي أجاب فقط عند الإجابة
+                                          Text(
+                                            resultText ?? "",
+                                            style: TextTheme.of(context)
+                                                .titleSmall!
+                                                .copyWith(
+                                                  color: GameColors.white,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        Text(
+                                          question.points.toString(),
+                                          style: TextTheme.of(context)
                                               .titleSmall!
                                               .copyWith(
-                                                color: GameColors.white,
-                                              )
-                                          : TextTheme.of(context).titleSmall,
+                                                fontWeight: FontWeight
+                                                    .bold, // ✅ جعل الرقم بارزًا
+                                                fontSize:
+                                                    18, // ✅ تعديل حجم الخط ليكون أوضح
+                                                color: isAnswered
+                                                    ? GameColors.white
+                                                    : GameColors.second,
+                                              ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),

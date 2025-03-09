@@ -73,7 +73,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
                     controller.stopTimer();
                     controller.isTeamOneTurn.value =
                         !controller.isTeamOneTurn.value;
-                    controller.selectResult(controller.teamOneName);
+                    controller.selectResult("${controller.teamOneName} ✅");
                   },
                   text: "إعطاء النقاط لفريق ${controller.teamOneName}",
                   relativisticWidth: 0.1,
@@ -88,7 +88,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
                     controller.stopTimer();
                     controller.isTeamOneTurn.value =
                         !controller.isTeamOneTurn.value;
-                    controller.selectResult("تعادل");
+                    controller.selectResult("❌ تعادل");
                   },
                   text: "لم يجب احد من الفريقين",
                   relativisticWidth: 0.1,
@@ -103,7 +103,7 @@ class QuestionBody extends GetView<QuestionControllerImpl> {
                     controller.stopTimer();
                     controller.isTeamOneTurn.value =
                         !controller.isTeamOneTurn.value;
-                    controller.selectResult(controller.teamTwoName);
+                    controller.selectResult("${controller.teamTwoName} ✅");
                   },
                   text: "إعطاء النقاط لفريق ${controller.teamTwoName}",
                   relativisticWidth: 0.1,
