@@ -63,7 +63,7 @@ class GameControllerImpl extends GameController {
 
         // ✅ اختيار 10 أسئلة عشوائية وترتيبها حسب النقاط
         List<QuestionModel> selectedQuestions = allQuestions..shuffle();
-        selectedQuestions = selectedQuestions.take(10).toList();
+        selectedQuestions = selectedQuestions.take(5).toList();
         selectedQuestions.sort((a, b) => a.points.compareTo(b.points));
 
         // ✅ حفظ الأسئلة ضمن الفئة الخاصة بها

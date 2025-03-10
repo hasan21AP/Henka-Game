@@ -26,38 +26,44 @@ class HomeBody extends GetWidget<HomeControllerImpl> {
           Center(
             child: Text(
               'اختبر حنكتك',
-              style: TextTheme.of(context).titleLarge,
+              style: TextTheme.of(context)
+                  .titleLarge!
+                  .copyWith(fontFamily: 'VIP Arabic Typo'),
             ),
           ),
           Center(
             child: Text(
               'وتحدى اصدقائك',
-              style: TextTheme.of(context).titleLarge,
+              style: TextTheme.of(context).titleLarge!.copyWith(
+                    fontFamily: 'VIP Arabic Typo',
+                  ),
             ),
           ),
           const VerticalSpace(value: 3),
-          CustomElevetedButton(
+          CustomHomeElevatedButton(
             text: 'ابدأ اللعب',
-            onPressed: () {
+            onTap: () {
               controller.goToCategoryPage();
             },
-            mainColor: GameColors.second,
-            secondColor: GameColors.main,
-            relativisticWidth: 0.8,
+            mainColor: GameColors.fourth,
+            secondColor: GameColors.second,
+            relativisticWidth: 0.3,
             relativisticHeight: .08,
             circleRadius: 10,
-            textStyle: TextTheme.of(context).titleLarge,
+            icon: Icons.play_arrow_outlined,
+            textStyle: TextTheme.of(context).titleSmall!,
           ),
           const VerticalSpace(value: 2),
-          CustomElevetedButton(
+          CustomHomeElevatedButton(
             text: 'الإعدادات',
-            onPressed: () {},
-            mainColor: GameColors.second,
-            secondColor: GameColors.main,
-            relativisticWidth: 0.8,
+            onTap: () {},
+            mainColor: GameColors.fourth,
+            secondColor: GameColors.second,
+            relativisticWidth: 0.3,
             relativisticHeight: .08,
             circleRadius: 10,
-            textStyle: TextTheme.of(context).titleLarge,
+            icon: Icons.settings_outlined,
+            textStyle: TextTheme.of(context).titleSmall!,
           ),
         ],
       );

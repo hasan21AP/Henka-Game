@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/core/constants/images.dart';
+import 'package:henka_game/core/constants/routes.dart';
 import 'package:henka_game/data/database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -28,20 +29,21 @@ class CategoryControllerImpl extends CategoryController {
   final RxString teamOneName = ''.obs;
   final RxString teamTwoName = ''.obs;
 
-  GlobalKey<FormState> teamOneKey = GlobalKey<FormState>();
-  GlobalKey<FormState> teamTwoKey = GlobalKey<FormState>();
+  UniqueKey teamOneKey = UniqueKey();
+  UniqueKey teamTwoKey = UniqueKey();
   TextEditingController teamOneController = TextEditingController();
   TextEditingController teamTwoController = TextEditingController();
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    fetchCategoriesFromDatabase();
+    await fetchCategoriesFromDatabase();
   }
 
   @override
   goToGamePage() {
-    Get.toNamed('/game');
+    Get.delete<CategoryControllerImpl>();
+    Get.toNamed(GameRoutes.game);
   }
 
   Future<void> fetchCategoriesFromDatabase() async {
@@ -70,6 +72,13 @@ class CategoryControllerImpl extends CategoryController {
     } catch (e) {
       log("[ERROR] فشل تحميل الفئات: $e");
     }
+  }
+
+  @override
+  void onClose() {
+    teamOneKey = UniqueKey(); // إعادة تعيين المفتاح عند الإغلاق
+    teamTwoKey = UniqueKey(); // إعادة تعيين المفتاح عند الإغلاق
+    super.onClose();
   }
 }
 

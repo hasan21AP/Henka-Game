@@ -57,6 +57,7 @@ class QuestionControllerImpl extends QuestionController {
         timer.cancel();
         timerText.value =
             "انتهى وقت فريق ${isTeamOneTime.value ? teamOneName : teamTwoName}، بدأ وقت فريق ${!isTeamOneTime.value ? teamOneName : teamTwoName}";
+        Get.forceAppUpdate();
         Future.delayed(Duration(seconds: 2), () {
           startTeamTwoTimer();
         });
@@ -78,6 +79,9 @@ class QuestionControllerImpl extends QuestionController {
         timerText.value =
             "انتهى وقت فريق ${isTeamOneTime.value ? teamOneName : teamTwoName}";
       }
+      Future.delayed(
+          Duration(seconds: 2), () => timerText.value = 'انتهى وقت الفريقين');
+      Get.forceAppUpdate();
     });
   }
 

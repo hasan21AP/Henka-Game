@@ -13,10 +13,11 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
       this.textColor,
       this.borderColor,
       this.iconFocusColor,
-      this.width,
+      required this.width,
+      required this.height,
       this.initialValue,
       required this.textAlign,
-      required this.fontSize,
+      required this.style,
       this.hintStyle});
 
   final Color? focusBorderColor;
@@ -29,21 +30,21 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
   final Color? borderColor;
   final Color? iconFocusColor;
   final TextAlign textAlign;
-  final double? width;
+  final double width;
+  final double height;
   final String? initialValue;
-  final double fontSize;
+  final TextStyle? style;
   final TextStyle? hintStyle;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
         width: width,
+        height: height,
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(
-              width: 0.05,
-              color: GameColors.main,
-            ),
+                width: 2, color: GameColors.third, style: BorderStyle.none),
           ),
           child: TextFormField(
             key: formKey,
@@ -55,23 +56,25 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
             textAlign: textAlign,
             cursorColor: focusBorderColor,
             decoration: InputDecoration(
+              hoverColor: GameColors.white,
+              fillColor: GameColors.white,
+              filled: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
               hintText: hintText,
               hintStyle: hintStyle,
               border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
                 borderSide: BorderSide(color: borderColor!, width: 2),
               ),
               focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(
-                color: focusBorderColor!,
-                width: 2,
-              )),
+                    color: focusBorderColor!,
+                    width: 2,
+                  )),
             ),
-            style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: textColor,
-                  fontSize: fontSize,
-                ),
+            style: style,
           ),
         ));
   }
