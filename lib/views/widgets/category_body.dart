@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/controller/category_controller.dart';
@@ -18,8 +17,6 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
 
   @override
   Widget build(BuildContext context) {
-    log("Number of Categories:  ${controller.numberOfCategorySelected.value}");
-    log('Message: ${controller.errorFieldMessage.value}');
     return Padding(
         padding: EdgeInsets.all(SizeConfig.screenWidth! * 0.01),
         child: Obx(() => controller.categories.length < 7

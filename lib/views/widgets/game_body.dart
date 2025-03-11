@@ -18,8 +18,6 @@ class GameBody extends GetView<GameControllerImpl> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = SizeConfig.screenHeight!;
-
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Center(
@@ -81,19 +79,15 @@ class GameBody extends GetView<GameControllerImpl> {
                                 top: SizeConfig.screenWidth! * 0.005),
                             child: ShaderMask(
                               shaderCallback: (bounds) => LinearGradient(
-                                colors: [
-                                  GameColors.main,
-                                  GameColors.fourth
-                                ], // 🎨 تحديد الألوان المتدرجة
-                                begin: Alignment.topLeft, // 📍 بداية التدرج
-                                end: Alignment.bottomRight, // 📍 نهاية التدرج
+                                colors: [GameColors.main, GameColors.fourth],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ).createShader(bounds),
                               child: Text(
                                 "حنكة",
                                 style:
                                     TextTheme.of(context).titleLarge!.copyWith(
-                                          color: Colors
-                                              .white, // يجب أن يكون اللون أبيض ليأخذ التدرج
+                                          color: Colors.white,
                                           fontFamily: 'VIP Arabic Typo',
                                         ),
                                 textAlign: TextAlign.center,
@@ -105,38 +99,6 @@ class GameBody extends GetView<GameControllerImpl> {
                       ),
                     ),
                   ],
-                ),
-              ),
-              VerticalSpace(value: 0.3),
-
-              // ✅ عناوين الفئات المختارة
-              SizedBox(
-                height: screenHeight * 0.08,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: controller.selectedCategories
-                      .map(
-                        (category) => Expanded(
-                          child: Container(
-                            margin: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: GameColors.third,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(
-                                nameEnToAr(category),
-                                textAlign: TextAlign.center,
-                                style:
-                                    TextTheme.of(context).titleSmall!.copyWith(
-                                          color: GameColors.white,
-                                        ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
                 ),
               ),
               VerticalSpace(value: 0.3),
@@ -157,115 +119,149 @@ class GameBody extends GetView<GameControllerImpl> {
                                 controller.categoryQuestions[category] ?? [];
 
                             return Expanded(
-                              child: ListView.builder(
-                                itemCount: categoryList.length,
-                                itemBuilder: (context, index) {
-                                  final QuestionModel question =
-                                      categoryList[index];
-                                  String questionKey =
-                                      "${category}_${question.points}_${question.question.hashCode}";
-
-                                  bool isAnswered = controller.answeredQuestions
-                                      .containsKey(questionKey);
-                                  String? resultText =
-                                      controller.answeredQuestions[questionKey];
-
-                                  return GestureDetector(
-                                    onTap: isAnswered
-                                        ? null
-                                        : () async {
-                                            if (Get.isRegistered<
-                                                QuestionControllerImpl>()) {
-                                              Get.delete<
-                                                  QuestionControllerImpl>();
-                                            }
-                                            Get.put(QuestionControllerImpl(
-                                              question: question.question,
-                                              answer: question.answer,
-                                              points: question.points,
-                                              category: question.category,
-                                              answerTime: controller.answerTime,
-                                              isTeamOneTurn:
-                                                  controller.isTeamOneTurn,
-                                              teamOneName:
-                                                  controller.teamOneName,
-                                              teamTwoName:
-                                                  controller.teamTwoName,
-                                            ));
-                                            String? result = await Get.to(
-                                                () => QuestionView());
-                                            if (result != null) {
-                                              controller
-                                                  .updateAnsweredQuestions(
-                                                      questionKey,
-                                                      result,
-                                                      question.points);
-                                            }
-                                          },
-                                    child: Container(
-                                      margin: EdgeInsets.all(4),
-                                      padding: isAnswered
-                                          ? EdgeInsets.all(4)
-                                          : EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: isAnswered
-                                            ? GameColors.third
-                                            : GameColors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: isAnswered
-                                                ? GameColors.white
-                                                : GameColors.third,
-                                            width: 1),
-                                      ),
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .center, // ✅ يجعل النصوص في المنتصف عموديًا
-                                          children: [
-                                            if (isAnswered) // ✅ عرض اسم الفريق الذي أجاب فقط عند الإجابة
-                                              Text(
-                                                resultText ?? "",
-                                                style: TextTheme.of(context)
-                                                    .titleSmall!
-                                                    .copyWith(
-                                                      color: GameColors.white,
-                                                      fontSize: isAnswered
-                                                          ? SizeConfig
-                                                                  .screenHeight! *
-                                                              0.0175
-                                                          : SizeConfig
-                                                                  .screenHeight! *
-                                                              0.025,
-                                                    ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            Text(
-                                              question.points.toString(),
-                                              style: TextTheme.of(context)
-                                                  .titleSmall!
-                                                  .copyWith(
-                                                    fontWeight: FontWeight
-                                                        .bold, // ✅ جعل الرقم بارزًا // ✅ تعديل حجم الخط ليكون أوضح
-                                                    color: isAnswered
-                                                        ? GameColors.white
-                                                        : GameColors.third,
-                                                    fontSize: isAnswered
-                                                        ? SizeConfig
-                                                                .screenHeight! *
-                                                            0.0175
-                                                        : SizeConfig
-                                                                .screenHeight! *
-                                                            0.025,
-                                                  ),
-                                              textAlign: TextAlign.center,
+                              child: Column(
+                                children: [
+                                  // ✅ اسم الفئة فوق كل عمود
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 4),
+                                    margin: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: GameColors.third,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        nameEnToAr(category),
+                                        textAlign: TextAlign.center,
+                                        style: TextTheme.of(context)
+                                            .titleSmall!
+                                            .copyWith(
+                                              color: GameColors.white,
                                             ),
-                                          ],
-                                        ),
                                       ),
                                     ),
-                                  );
-                                },
+                                  ),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: categoryList.length,
+                                      itemBuilder: (context, index) {
+                                        final QuestionModel question =
+                                            categoryList[index];
+                                        String questionKey =
+                                            "${category}_${question.points}_${question.question.hashCode}";
+
+                                        bool isAnswered = controller
+                                            .answeredQuestions
+                                            .containsKey(questionKey);
+                                        String? resultText = controller
+                                            .answeredQuestions[questionKey];
+
+                                        return GestureDetector(
+                                          onTap: isAnswered
+                                              ? null
+                                              : () async {
+                                                  if (Get.isRegistered<
+                                                      QuestionControllerImpl>()) {
+                                                    Get.delete<
+                                                        QuestionControllerImpl>();
+                                                  }
+                                                  Get.put(
+                                                      QuestionControllerImpl(
+                                                    question: question.question,
+                                                    answer: question.answer,
+                                                    points: question.points,
+                                                    category: question.category,
+                                                    answerTime:
+                                                        controller.answerTime,
+                                                    isTeamOneTurn: controller
+                                                        .isTeamOneTurn,
+                                                    teamOneName:
+                                                        controller.teamOneName,
+                                                    teamTwoName:
+                                                        controller.teamTwoName,
+                                                  ));
+                                                  String? result = await Get.to(
+                                                      () => QuestionView());
+                                                  if (result != null) {
+                                                    controller
+                                                        .updateAnsweredQuestions(
+                                                            questionKey,
+                                                            result,
+                                                            question.points);
+                                                  }
+                                                },
+                                          child: Container(
+                                            margin: EdgeInsets.all(4),
+                                            padding: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: isAnswered
+                                                  ? GameColors.third
+                                                  : GameColors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: isAnswered
+                                                      ? GameColors.white
+                                                      : GameColors.third,
+                                                  width: 1),
+                                            ),
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  if (isAnswered)
+                                                    Text(
+                                                      resultText ?? "",
+                                                      style:
+                                                          TextTheme.of(context)
+                                                              .titleSmall!
+                                                              .copyWith(
+                                                                color:
+                                                                    GameColors
+                                                                        .white,
+                                                                fontSize: isAnswered
+                                                                    ? SizeConfig
+                                                                            .screenHeight! *
+                                                                        0.012
+                                                                    : SizeConfig
+                                                                            .screenHeight! *
+                                                                        0.025,
+                                                              ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  Text(
+                                                    question.points.toString(),
+                                                    style: TextTheme.of(context)
+                                                        .titleSmall!
+                                                        .copyWith(
+                                                          fontWeight: FontWeight
+                                                              .bold, // ✅ جعل الرقم بارزًا // ✅ تعديل حجم الخط ليكون أوضح
+                                                          color: isAnswered
+                                                              ? GameColors.white
+                                                              : GameColors
+                                                                  .third,
+                                                          fontSize: isAnswered
+                                                              ? SizeConfig
+                                                                      .screenHeight! *
+                                                                  0.012
+                                                              : SizeConfig
+                                                                      .screenHeight! *
+                                                                  0.025,
+                                                        ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           }).toList(),
@@ -273,18 +269,23 @@ class GameBody extends GetView<GameControllerImpl> {
                 }),
               ),
               VerticalSpace(value: 1),
-              // ✅ نقل النتيجة إلى الأسفل تمامًا
+
+              // ✅ عرض إحصائيات الفريقين
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildScoreBoard(controller.teamOneName,
-                        controller.teamOneScore, context),
-                    // ✅ النص في المنتصف ليظهر الفريق الحالي
-
-                    _buildScoreBoard(controller.teamTwoName,
-                        controller.teamTwoScore, context),
+                    _buildScoreBoard(
+                        controller.teamOneName,
+                        controller.teamOneScore,
+                        controller.teamOneAnsweredCount,
+                        context),
+                    _buildScoreBoard(
+                        controller.teamTwoName,
+                        controller.teamTwoScore,
+                        controller.teamTwoAnsweredCount,
+                        context),
                   ],
                 ),
               ),
@@ -296,16 +297,14 @@ class GameBody extends GetView<GameControllerImpl> {
   }
 }
 
-// ✅ مكون لوحة النقاط لكل فريق
-Widget _buildScoreBoard(String teamName, RxInt score, BuildContext context) {
+Widget _buildScoreBoard(
+    String teamName, RxInt score, RxInt answeredCount, BuildContext context) {
   return Expanded(
     child: Column(
       children: [
         Stack(
-          alignment:
-              Alignment.center, // يجعل العناصر في منتصف الـ Stack تلقائيًا
+          alignment: Alignment.center,
           children: [
-            // ✅ الصورة الخلفية
             Container(
               width: SizeConfig.screenWidth! * 0.1,
               height: SizeConfig.screenHeight! * 0.07,
@@ -316,10 +315,8 @@ Widget _buildScoreBoard(String teamName, RxInt score, BuildContext context) {
                 ),
               ),
             ),
-
-            // ✅ النص في المنتصف
             Align(
-              alignment: Alignment.center, // يضمن بقاء النص في منتصف الصورة
+              alignment: Alignment.center,
               child: Text(
                 teamName,
                 style: TextTheme.of(context).titleSmall,
@@ -340,12 +337,13 @@ Widget _buildScoreBoard(String teamName, RxInt score, BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               GestureDetector(
-                  onTap: () => score.value > 0 ? score.value -= 100 : 0,
-                  child: Image.asset(
-                    GameImages.minus,
-                    width: SizeConfig.screenWidth! * 0.03,
-                    height: SizeConfig.screenHeight! * 0.04,
-                  )),
+                onTap: () => score.value > 0 ? score.value -= 100 : 0,
+                child: Image.asset(
+                  GameImages.minus,
+                  width: SizeConfig.screenWidth! * 0.03,
+                  height: SizeConfig.screenHeight! * 0.04,
+                ),
+              ),
               Obx(() => Text(
                     score.value.toString(),
                     style: const TextStyle(
@@ -354,15 +352,23 @@ Widget _buildScoreBoard(String teamName, RxInt score, BuildContext context) {
                         color: GameColors.third),
                   )),
               GestureDetector(
-                  onTap: () => score.value += 100,
-                  child: Image.asset(
-                    GameImages.plus,
-                    width: SizeConfig.screenWidth! * 0.03,
-                    height: SizeConfig.screenHeight! * 0.04,
-                  )),
+                onTap: () => score.value += 100,
+                child: Image.asset(
+                  GameImages.plus,
+                  width: SizeConfig.screenWidth! * 0.03,
+                  height: SizeConfig.screenHeight! * 0.04,
+                ),
+              ),
             ],
           ),
         ),
+        VerticalSpace(value: 0.3),
+        Obx(() => Text(
+              "إجابات صحيحة: ${answeredCount.value}",
+              style: TextTheme.of(context)
+                  .titleSmall!
+                  .copyWith(color: GameColors.fourth),
+            )),
       ],
     ),
   );

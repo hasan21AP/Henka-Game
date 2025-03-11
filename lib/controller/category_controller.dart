@@ -28,7 +28,6 @@ class CategoryControllerImpl extends CategoryController {
   final RxInt numberOfCategorySelected = 0.obs;
   final RxString teamOneName = ''.obs;
   final RxString teamTwoName = ''.obs;
-  RxString errorFieldMessage = ''.obs;
   RxBool isValid = false.obs;
 
   GlobalKey<FormState> teamOneKey = GlobalKey<FormState>();
