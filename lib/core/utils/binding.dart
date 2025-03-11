@@ -5,8 +5,7 @@ import 'package:henka_game/controller/home_controller.dart';
 class MyBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeControllerImpl>(() => HomeControllerImpl(), fenix: true);
-    Get.lazyPut<CategoryControllerImpl>(() => CategoryControllerImpl(),
-        fenix: true);
+    Get.put<HomeControllerImpl>(HomeControllerImpl());
+    Get.put<CategoryControllerImpl>(CategoryControllerImpl());
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:henka_game/controller/category_controller.dart';
 import 'package:henka_game/controller/game_controller.dart';
 import 'package:henka_game/controller/question_controller.dart';
 import 'package:henka_game/core/constants/colors.dart';
 import 'package:henka_game/core/constants/images.dart';
 import 'package:henka_game/core/constants/routes.dart';
+import 'package:henka_game/core/customs/custom_buttons.dart';
 import 'package:henka_game/core/customs/custom_space.dart';
 import 'package:henka_game/core/customs/size_config.dart';
 import 'package:henka_game/core/functions/en_to_ar.dart';
@@ -34,16 +36,17 @@ class GameBody extends GetView<GameControllerImpl> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(GameRoutes.category);
-                      },
-                      child: Image.asset(
-                        GameImages.exit,
-                        width: SizeConfig.screenWidth! * 0.1,
-                        height: SizeConfig.screenHeight! * 0.06,
-                      ),
-                    ),
+                    CustomBackButton(
+                        onTap: () {
+                          if (Get.isRegistered<CategoryControllerImpl>()) {
+                            Get.delete<CategoryControllerImpl>();
+                          }
+                          Get.put(CategoryControllerImpl());
+                          Get.toNamed(GameRoutes.category);
+                        },
+                        image: GameImages.exit,
+                        width: 0.1,
+                        height: 0.06),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

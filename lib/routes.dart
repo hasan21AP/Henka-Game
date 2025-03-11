@@ -14,8 +14,7 @@ List<GetPage<dynamic>> routes = [
   GetPage(
     name: GameRoutes.home,
     page: () => const HomeView(),
-    transition: Transition.fadeIn,
-    transitionDuration: const Duration(milliseconds: 800),
+    transition: Transition.native,
   ),
   GetPage(
     name: GameRoutes.category,

@@ -12,4 +12,6 @@ class GameImages {
   static const String minus = '$root/minus-icon.png';
   static const String teamName = '$root/team-name.png';
   static const String exit = '$root/exit.png';
+  static const String back = '$root/back.png';
+  static const String check = '$root/check.png';
 }

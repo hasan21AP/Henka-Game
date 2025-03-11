@@ -56,8 +56,8 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
             textAlign: textAlign,
             cursorColor: focusBorderColor,
             decoration: InputDecoration(
-              hoverColor: GameColors.white,
-              fillColor: GameColors.white,
+              hoverColor: GameColors.third,
+              fillColor: GameColors.third,
               filled: true,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 18, horizontal: 18),

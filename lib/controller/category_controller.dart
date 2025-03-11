@@ -24,8 +24,7 @@ class CategoryControllerImpl extends CategoryController {
   ];
   final RxMap<String, bool> selectedCategories = <String, bool>{}.obs;
   final RxDouble answerTime = 60.0.obs;
-  final RxInt numberOfCategoryCount = 1.obs;
-  RxInt numberOfCategorySelected = 0.obs;
+  final RxInt numberOfCategorySelected = 0.obs;
   final RxString teamOneName = ''.obs;
   final RxString teamTwoName = ''.obs;
 
@@ -41,12 +40,15 @@ class CategoryControllerImpl extends CategoryController {
   }
 
   @override
-  goToGamePage() {
-    Get.delete<CategoryControllerImpl>();
-    Get.toNamed(GameRoutes.game);
+  goToGamePage() async {
+    await Future.delayed(Duration(milliseconds: 800), () {
+      Get.delete<CategoryControllerImpl>(); // ✅ حذف الكونترولر
+      Get.toNamed(GameRoutes.game);
+    });
   }
 
   Future<void> fetchCategoriesFromDatabase() async {
+    await Future.delayed(Duration(seconds: 2), () {});
     try {
       final Database db = await DatabaseHelper.database;
 

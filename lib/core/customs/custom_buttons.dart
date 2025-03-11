@@ -257,3 +257,31 @@ class CustomHomeElevatedButton extends StatelessWidget {
     );
   }
 }
+
+class CustomBackButton extends StatelessWidget {
+  const CustomBackButton(
+      {super.key,
+      required this.onTap,
+      required this.image,
+      required this.width,
+      required this.height});
+
+  final void Function() onTap;
+  final String image;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () async {
+          await AudioService.playClickSound();
+          onTap();
+        },
+        child: Image.asset(
+          image,
+          width: SizeConfig.screenWidth! * width,
+          height: SizeConfig.screenHeight! * height,
+        ));
+  }
+}
