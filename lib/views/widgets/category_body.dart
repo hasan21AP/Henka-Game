@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/controller/category_controller.dart';
@@ -12,6 +11,7 @@ import 'package:henka_game/core/customs/custom_forms.dart';
 import 'package:henka_game/core/customs/custom_space.dart';
 import 'package:henka_game/core/customs/size_config.dart';
 import 'package:henka_game/core/functions/en_to_ar.dart';
+import 'package:henka_game/core/functions/validation.dart';
 
 class CategoryBody extends GetView<CategoryControllerImpl> {
   const CategoryBody({super.key});
@@ -19,12 +19,13 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
   @override
   Widget build(BuildContext context) {
     log("Number of Categories:  ${controller.numberOfCategorySelected.value}");
+    log('Message: ${controller.errorFieldMessage.value}');
     return Padding(
         padding: EdgeInsets.all(SizeConfig.screenWidth! * 0.01),
         child: Obx(() => controller.categories.length < 7
             ? Center(
                 child: CircularProgressIndicator(
-                color: GameColors.third,
+                color: GameColors.white,
               ))
             : SingleChildScrollView(
                 child: Padding(
@@ -45,7 +46,8 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                               children: [
                                 CustomBackButton(
                                     onTap: () {
-                                      Get.toNamed(GameRoutes.home);
+                                      Get.delete<CategoryBody>();
+                                      Get.offAllNamed(GameRoutes.home);
                                     },
                                     image: GameImages.back,
                                     width: 0.1,
@@ -169,21 +171,20 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                                           ),
                                         ),
 
-                                        controller.selectedCategories[category]!
-                                            ? Center(
-                                                child: Container(
-                                                  alignment: Alignment.center,
-                                                  width:
-                                                      SizeConfig.screenWidth! *
-                                                          0.2,
-                                                  height:
-                                                      SizeConfig.screenHeight! *
-                                                          0.1,
-                                                  child: Image.asset(
-                                                      GameImages.check),
-                                                ),
-                                              )
-                                            : SizedBox.shrink(),
+                                        // ✅ علامة ✅ في الزاوية العلوية اليمنى عند تحديد الفئة
+                                        if (controller
+                                            .selectedCategories[category]!)
+                                          Positioned(
+                                            top: 4, // ✅ المسافة من الأعلى
+                                            left: -20, // ✅ المسافة من اليمين
+                                            child: Image.asset(GameImages.check,
+                                                width: SizeConfig.screenWidth! *
+                                                    0.2,
+                                                height:
+                                                    SizeConfig.screenHeight! *
+                                                        0.1),
+                                          ),
+
                                         // ✅ شريط سفلي يحتوي على اسم الفئة
                                         Container(
                                           height: 35,
@@ -242,6 +243,9 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                           CustomTextFieldFormForUserName(
                             formKey: controller.teamOneKey,
                             myController: controller.teamOneController,
+                            validator: (val) {
+                              return validtion(val!, 2, 15);
+                            },
                             focusBorderColor: GameColors.white,
                             borderColor: GameColors.third,
                             hintText: "اسم الفريق الأول",
@@ -262,6 +266,9 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                           CustomTextFieldFormForUserName(
                             formKey: controller.teamTwoKey,
                             myController: controller.teamTwoController,
+                            validator: (val) {
+                              return validtion(val!, 2, 15);
+                            },
                             focusBorderColor: GameColors.white,
                             borderColor: GameColors.fourth,
                             hintText: "اسم الفريق الثاني",
@@ -278,28 +285,53 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                           VerticalSpace(value: 1),
                           CustomHomeElevatedButton(
                             onTap: () {
-                              if (Get.isRegistered<GameControllerImpl>()) {
-                                Get.delete<GameControllerImpl>();
+                              if (controller.numberOfCategorySelected.value >
+                                  0) {
+                                if (controller.validation()) {
+                                  if (Get.isRegistered<GameControllerImpl>()) {
+                                    Get.delete<GameControllerImpl>();
+                                  }
+                                  controller.teamOneName.value =
+                                      controller.teamOneController.text;
+                                  controller.teamTwoName.value =
+                                      controller.teamTwoController.text;
+                                  List<String> selectedCategories = controller
+                                      .selectedCategories.entries
+                                      .where((entry) => entry.value)
+                                      .map((entry) => entry.key)
+                                      .toList();
+
+                                  // ✅ إعادة إنشاء `GameControllerImpl` بتمرير الفئات المختارة
+                                  Get.put(GameControllerImpl(
+                                    selectedCategories: selectedCategories,
+                                    teamOneName:
+                                        controller.teamOneController.text,
+                                    teamTwoName:
+                                        controller.teamTwoController.text,
+                                    answerTime: controller.answerTime.value,
+                                  ));
+
+                                  Get.toNamed(GameRoutes.game);
+                                } else {
+                                  Get.snackbar(
+                                    "خطأ",
+                                    "يرجى عدم ترك الحقول فارغة",
+                                    colorText: GameColors.white,
+                                    backgroundColor: GameColors.third,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    duration: Duration(seconds: 3),
+                                  );
+                                }
+                              } else {
+                                Get.snackbar(
+                                  "خطأ",
+                                  "يرجى تحديد قسم واحد على الأقل",
+                                  colorText: GameColors.white,
+                                  backgroundColor: GameColors.third,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  duration: Duration(seconds: 3),
+                                );
                               }
-                              controller.teamOneName.value =
-                                  controller.teamOneController.text;
-                              controller.teamTwoName.value =
-                                  controller.teamTwoController.text;
-                              List<String> selectedCategories = controller
-                                  .selectedCategories.entries
-                                  .where((entry) => entry.value)
-                                  .map((entry) => entry.key)
-                                  .toList();
-
-                              // ✅ إعادة إنشاء `GameControllerImpl` بتمرير الفئات المختارة
-                              Get.put(GameControllerImpl(
-                                selectedCategories: selectedCategories,
-                                teamOneName: controller.teamOneController.text,
-                                teamTwoName: controller.teamTwoController.text,
-                                answerTime: controller.answerTime.value,
-                              ));
-
-                              Get.toNamed(GameRoutes.game);
                             },
                             circleRadius: 10,
                             text: "ابدأ اللعبة",

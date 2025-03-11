@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:henka_game/core/constants/colors.dart';
+import 'package:henka_game/core/customs/size_config.dart';
 
 class CustomTextFieldFormForUserName extends StatelessWidget {
-  const CustomTextFieldFormForUserName(
-      {super.key,
-      required this.focusBorderColor,
-      this.onPressed,
-      this.validator,
-      this.formKey,
-      this.myController,
-      this.hintText,
-      this.textColor,
-      this.borderColor,
-      this.iconFocusColor,
-      required this.width,
-      required this.height,
-      this.initialValue,
-      required this.textAlign,
-      required this.style,
-      this.hintStyle});
+  const CustomTextFieldFormForUserName({
+    super.key,
+    required this.focusBorderColor,
+    this.onPressed,
+    this.validator,
+    this.formKey,
+    this.myController,
+    this.hintText,
+    this.textColor,
+    this.borderColor,
+    this.iconFocusColor,
+    required this.width,
+    required this.height,
+    this.initialValue,
+    required this.textAlign,
+    required this.style,
+    this.hintStyle,
+  });
 
   final Color? focusBorderColor;
   final VoidCallback? onPressed;
@@ -38,45 +40,56 @@ class CustomTextFieldFormForUserName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: width,
-        height: height,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-                width: 2, color: GameColors.third, style: BorderStyle.none),
-          ),
-          child: TextFormField(
-            key: formKey,
-            controller: myController,
-            keyboardType: TextInputType.name,
-            autocorrect: true,
-            initialValue: initialValue,
-            validator: validator,
-            textAlign: textAlign,
-            cursorColor: focusBorderColor,
-            decoration: InputDecoration(
-              hoverColor: GameColors.third,
-              fillColor: GameColors.third,
-              filled: true,
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-              hintText: hintText,
-              hintStyle: hintStyle,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide(color: borderColor!, width: 2),
-              ),
-              focusedBorder: OutlineInputBorder(
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: width,
+            child: TextFormField(
+              controller: myController,
+              keyboardType: TextInputType.name,
+              autocorrect: true,
+              initialValue: initialValue,
+              validator: validator,
+              textAlign: textAlign,
+              cursorColor: focusBorderColor,
+              decoration: InputDecoration(
+                errorStyle: TextTheme.of(context).titleSmall!.copyWith(
+                    color: GameColors.fourth,
+                    fontSize: SizeConfig.screenWidth! *
+                        0.01), // ✅ ضبط لون وحجم رسالة الخطأ
+                errorMaxLines: 1, // ✅ تحديد عدد الأسطر المسموحة للخطأ
+                errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(
-                    color: focusBorderColor!,
-                    width: 2,
-                  )),
+                  borderSide: BorderSide(color: GameColors.white, width: 2),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: GameColors.white, width: 2),
+                ),
+                fillColor: GameColors.third,
+                filled: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+                hintText: hintText,
+                hintStyle: hintStyle,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: borderColor!, width: 2),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: focusBorderColor!, width: 2),
+                ),
+              ),
+              style: style,
             ),
-            style: style,
           ),
-        ));
+        ],
+      ),
+    );
   }
 }
 

@@ -9,6 +9,7 @@ import 'package:sqflite/sqflite.dart';
 
 abstract class CategoryController extends GetxController {
   goToGamePage();
+  validation();
 }
 
 class CategoryControllerImpl extends CategoryController {
@@ -27,9 +28,11 @@ class CategoryControllerImpl extends CategoryController {
   final RxInt numberOfCategorySelected = 0.obs;
   final RxString teamOneName = ''.obs;
   final RxString teamTwoName = ''.obs;
+  RxString errorFieldMessage = ''.obs;
+  RxBool isValid = false.obs;
 
-  UniqueKey teamOneKey = UniqueKey();
-  UniqueKey teamTwoKey = UniqueKey();
+  GlobalKey<FormState> teamOneKey = GlobalKey<FormState>();
+  GlobalKey<FormState> teamTwoKey = GlobalKey<FormState>();
   TextEditingController teamOneController = TextEditingController();
   TextEditingController teamTwoController = TextEditingController();
 
@@ -40,11 +43,9 @@ class CategoryControllerImpl extends CategoryController {
   }
 
   @override
-  goToGamePage() async {
-    await Future.delayed(Duration(milliseconds: 800), () {
-      Get.delete<CategoryControllerImpl>(); // ✅ حذف الكونترولر
-      Get.toNamed(GameRoutes.game);
-    });
+  goToGamePage() {
+    Get.delete<CategoryControllerImpl>(); // ✅ حذف الكونترولر
+    Get.offAllNamed(GameRoutes.game);
   }
 
   Future<void> fetchCategoriesFromDatabase() async {
@@ -78,9 +79,22 @@ class CategoryControllerImpl extends CategoryController {
 
   @override
   void onClose() {
-    teamOneKey = UniqueKey(); // إعادة تعيين المفتاح عند الإغلاق
-    teamTwoKey = UniqueKey(); // إعادة تعيين المفتاح عند الإغلاق
+    teamOneKey = GlobalKey<FormState>(); // إعادة تعيين المفتاح عند الإغلاق
+    teamTwoKey = GlobalKey<FormState>(); // إعادة تعيين المفتاح عند الإغلاق
     super.onClose();
+  }
+
+  @override
+  validation() {
+    final teamOneState = teamOneKey.currentState;
+    final teamTwoState = teamTwoKey.currentState;
+
+    // ✅ تحقق مما إذا كان أي مفتاح لم يتم ربطه بعد
+    if (teamOneState == null || teamTwoState == null) {
+      return false;
+    }
+
+    return teamOneState.validate() && teamTwoState.validate();
   }
 }
 

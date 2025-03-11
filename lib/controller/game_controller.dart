@@ -35,10 +35,7 @@ class GameControllerImpl extends GameController {
   void onInit() async {
     await fetchQuestions();
     super.onInit();
-    update();
-    Future.delayed(Duration(milliseconds: 500), () {
-      Get.forceAppUpdate(); // 🔄 يجبر GetX على إعادة بناء التطبيق بالكامل
-    });
+    Get.forceAppUpdate(); // 🔄 يجبر GetX على إعادة بناء التطبيق بالكامل
   }
 
   @override
