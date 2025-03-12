@@ -10,7 +10,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 class DatabaseHelper {
   static Database? _database;
 
-  static const String dbName = "henka.db";
+  static const String dbName = "henka-1.db";
 
   static Future<Database> get database async {
     if (_database != null) return _database!;

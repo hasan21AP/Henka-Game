@@ -6,4 +6,5 @@ class Terms {
   static const String moviesAndSeriesQuestions = 'أفلام ومسلسلات';
   static const String scienceQuestions = 'علوم';
   static const String quranQuestions = 'قرآن';
+  static const String wweQuestions = 'مصارعة';
 }

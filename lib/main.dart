@@ -22,7 +22,7 @@ void main() async {
 
   // ✅ ضبط النافذة لتكون Full Screen
   windowManager.waitUntilReadyToShow().then((_) async {
-    await windowManager.setFullScreen(false);
+    await windowManager.setFullScreen(true);
   });
   await initalServeces();
   runApp(const HenkaGame());

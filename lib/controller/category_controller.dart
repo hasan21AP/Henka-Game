@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:henka_game/core/constants/images.dart';
@@ -22,6 +21,7 @@ class CategoryControllerImpl extends CategoryController {
     GameImages.moviesSeries,
     GameImages.science,
     GameImages.quran,
+    GameImages.wwe,
   ];
   final RxMap<String, bool> selectedCategories = <String, bool>{}.obs;
   final RxDouble answerTime = 60.0.obs;

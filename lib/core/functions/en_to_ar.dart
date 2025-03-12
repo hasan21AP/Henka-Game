@@ -16,6 +16,8 @@ String nameEnToAr(String name) {
       return Terms.quranQuestions;
     case "religious_questions":
       return Terms.religiousQuestions;
+    case "wwe_questions":
+      return Terms.wweQuestions;
     default:
       return "غير معروف";
   }

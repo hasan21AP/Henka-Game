@@ -112,111 +112,133 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                             ),
                           ),
                           VerticalSpace(value: 2),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics:
-                                NeverScrollableScrollPhysics(), // منع التمرير داخل GridView لأنه داخل ListView
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: controller.categories
-                                  .length, // عدد الأعمدة (يمكنك تغييره إلى 3 لجعل البطاقات أصغر)
-                              crossAxisSpacing: 8, // تقليل المسافات بين الأعمدة
-                              mainAxisSpacing: 8, // تقليل المسافات بين الصفوف
-                              childAspectRatio:
-                                  0.8, // تقليل نسبة العرض إلى الارتفاع لتصغير البطاقات
-                            ),
-                            itemCount: controller.categories.length,
-                            itemBuilder: (context, index) {
-                              String category = controller.categories[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  controller.selectedCategories[category] =
-                                      !controller.selectedCategories[category]!;
-
-                                  controller.numberOfCategorySelected.value =
-                                      controller.selectedCategories.values
-                                          .where((value) => value)
-                                          .length;
-                                },
-                                child: Obx(
-                                  () => Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: GameColors.third,
-                                        width: 3,
-                                      ),
-                                      color: controller
-                                              .selectedCategories[category]!
-                                          ? GameColors.third
-                                          : GameColors.white,
-                                    ),
-                                    child: Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: [
-                                        // ✅ الصورة داخل البطاقة
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          child: Image.asset(
-                                            controller.images[index],
-                                            fit: BoxFit
-                                                .cover, // ✅ يجعل الصورة تغطي كامل البطاقة بشكل مناسب
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        ),
-
-                                        // ✅ علامة ✅ في الزاوية العلوية اليمنى عند تحديد الفئة
-                                        if (controller
-                                            .selectedCategories[category]!)
-                                          Positioned(
-                                            top: 4, // ✅ المسافة من الأعلى
-                                            left: -20, // ✅ المسافة من اليمين
-                                            child: Image.asset(GameImages.check,
-                                                width: SizeConfig.screenWidth! *
-                                                    0.2,
-                                                height:
-                                                    SizeConfig.screenHeight! *
-                                                        0.1),
-                                          ),
-
-                                        // ✅ شريط سفلي يحتوي على اسم الفئة
-                                        Container(
-                                          height: 35,
-                                          width: double.infinity,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            color: GameColors.third.withValues(
-                                                alpha:
-                                                    .8), // ✅ لون داكن مع شفافية
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(9),
-                                              bottomRight: Radius.circular(9),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            nameEnToAr(category),
-                                            style: TextStyle(
-                                              fontSize:
-                                                  SizeConfig.screenWidth! *
-                                                      0.02,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                          Expanded(
+                            child: SizedBox(
+                              height: SizeConfig.screenHeight! * 0.4,
+                              child: SingleChildScrollView(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics:
+                                      BouncingScrollPhysics(), // منع التمرير داخل GridView لأنه داخل ListView
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        8, // عدد الأعمدة (يمكنك تغييره إلى 3 لجعل البطاقات أصغر)
+                                    crossAxisSpacing:
+                                        8, // تقليل المسافات بين الأعمدة
+                                    mainAxisSpacing:
+                                        8, // تقليل المسافات بين الصفوف
+                                    childAspectRatio:
+                                        0.8, // تقليل نسبة العرض إلى الارتفاع لتصغير البطاقات
                                   ),
+                                  itemCount: controller.categories.length,
+                                  itemBuilder: (context, index) {
+                                    String category =
+                                        controller.categories[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        controller
+                                                .selectedCategories[category] =
+                                            !controller
+                                                .selectedCategories[category]!;
+
+                                        controller.numberOfCategorySelected
+                                                .value =
+                                            controller.selectedCategories.values
+                                                .where((value) => value)
+                                                .length;
+                                      },
+                                      child: Obx(
+                                        () => Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color: GameColors.third,
+                                              width: 3,
+                                            ),
+                                            color:
+                                                controller.selectedCategories[
+                                                        category]!
+                                                    ? GameColors.third
+                                                    : GameColors.white,
+                                          ),
+                                          child: Stack(
+                                            alignment: Alignment.bottomCenter,
+                                            children: [
+                                              // ✅ الصورة داخل البطاقة
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Image.asset(
+                                                  controller.images[index],
+                                                  fit: BoxFit
+                                                      .cover, // ✅ يجعل الصورة تغطي كامل البطاقة بشكل مناسب
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                ),
+                                              ),
+
+                                              // ✅ علامة ✅ في الزاوية العلوية اليمنى عند تحديد الفئة
+                                              if (controller.selectedCategories[
+                                                  category]!)
+                                                Positioned(
+                                                  top: 4, // ✅ المسافة من الأعلى
+                                                  left:
+                                                      -20, // ✅ المسافة من اليمين
+                                                  child: Image.asset(
+                                                      GameImages.check,
+                                                      width: SizeConfig
+                                                              .screenWidth! *
+                                                          0.2,
+                                                      height: SizeConfig
+                                                              .screenHeight! *
+                                                          0.1),
+                                                ),
+
+                                              // ✅ شريط سفلي يحتوي على اسم الفئة
+                                              Container(
+                                                height: 35,
+                                                width: double.infinity,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  color: GameColors.third
+                                                      .withValues(
+                                                          alpha:
+                                                              .8), // ✅ لون داكن مع شفافية
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(9),
+                                                    bottomRight:
+                                                        Radius.circular(9),
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  nameEnToAr(category),
+                                                  style: TextStyle(
+                                                    fontSize: SizeConfig
+                                                            .screenWidth! *
+                                                        0.02,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ),
+                            ),
                           ),
-                          VerticalSpace(value: 1),
+                          VerticalSpace(value: 0.1),
                           Text("اختر زمن الإجابة (بالثواني):",
                               style: TextTheme.of(context).titleLarge!.copyWith(
                                     color: GameColors.third,
@@ -338,7 +360,8 @@ class CategoryBody extends GetView<CategoryControllerImpl> {
                             relativisticHeight: 0.07,
                             icon: Icons.play_circle_outline_rounded,
                             textStyle: TextTheme.of(context).titleSmall!,
-                          )
+                          ),
+                          VerticalSpace(value: 1)
                         ],
                       ),
                     ),
